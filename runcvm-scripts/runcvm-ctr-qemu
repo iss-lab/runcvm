@@ -346,6 +346,12 @@ else
   APPEND+=(quiet)
 fi
 
+BALLOON=()
+if [ "${RUNCVM_QEMU_BALLOON}" = "1" ]; then
+  # Enable QEMU memory ballooning device if requested
+  BALLOON+=( -device virtio-balloon )
+fi
+
 ARGS=(
   -no-user-config
   -nodefaults
@@ -369,8 +375,12 @@ ARGS=(
   # Creates an RNG on the PCI bus
   -object rng-random,id=rng0,filename=/dev/urandom -device virtio-rng-pci,rng=rng0
 
+
   # Memory backend
   "${MEM_BACKEND[@]}"
+
+  # Memory ballooning device (optional)
+  "${BALLOON[@]}"
 
   # virtiofs socket and interface
   "${VIRTIOFS[@]}"
